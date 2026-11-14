@@ -107,7 +107,7 @@ export const getPlayerProfile = createServerFn({ method: "GET" })
     const { data: player, error } = await db
       .from("players")
       .select("id, username, region, joined_at")
-      .ilike("username", data.username)
+      .ilike("username", data.username.replace(/[\\%_]/g, (c) => `\\${c}`))
       .maybeSingle();
     if (error) throw new Error(`Could not load player: ${error.message}`);
     if (!player) throw notFound();
