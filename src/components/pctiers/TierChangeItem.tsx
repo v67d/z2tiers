@@ -27,20 +27,15 @@ export function TierChangeItem({ change, showPlayer = true }: { change: ChangeIt
             {change.username}
           </Link>
         ) : null}
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <GamemodeIcon slug={change.gamemode} className="size-3.5" />
-          <span>{mode?.name}</span>
-          <span aria-hidden>·</span>
-          <span suppressHydrationWarning>{formatDistanceToNowStrict(new Date(change.changedAt), { addSuffix: true })}</span>
-          {change.tester && (
-            <>
-              <span aria-hidden>·</span>
-              <span className="truncate">by {change.tester}</span>
-            </>
-          )}
+        <div className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
+          <GamemodeIcon slug={change.gamemode} className="size-3.5 shrink-0" />
+          <span className="truncate" suppressHydrationWarning>
+            {mode?.name} · {formatDistanceToNowStrict(new Date(change.changedAt), { addSuffix: true })}
+            {change.tester ? ` · by ${change.tester}` : ""}
+          </span>
         </div>
       </div>
-      <div className="flex items-center gap-1.5">
+      <div className="flex shrink-0 items-center gap-1.5">
         {change.fromTier && <TierBadge tier={change.fromTier} className="opacity-70" />}
         <MoveIcon className={`size-4 ${moveClass}`} aria-label={move} />
         <TierBadge tier={change.toTier} />
