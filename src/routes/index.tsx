@@ -70,16 +70,16 @@ function Home() {
             </div>
           </div>
 
-          <div className="mt-14 grid max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="mt-14 grid max-w-3xl grid-cols-3 gap-2 sm:gap-3">
             {stats.map((s, i) => (
               <div
                 key={s.label}
-                className="surface animate-float-up bg-card/80 p-5 backdrop-blur"
+                className="surface animate-float-up bg-card/80 p-3 backdrop-blur sm:p-5"
                 style={{ animationDelay: `${120 + i * 80}ms` }}
               >
                 <s.icon className="size-5 text-secondary" />
-                <div className="mt-3 font-display text-3xl font-bold tabular-nums">{s.value.toLocaleString()}</div>
-                <div className="text-sm text-muted-foreground">{s.label}</div>
+                <div className="mt-3 font-display text-2xl font-bold tabular-nums sm:text-3xl">{s.value.toLocaleString()}</div>
+                <div className="text-xs text-muted-foreground sm:text-sm">{s.label}</div>
               </div>
             ))}
           </div>
