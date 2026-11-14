@@ -181,7 +181,7 @@ function ModeRankings() {
               {rows.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">
-                    No players match these filters.
+                    {data.length === 0 ? "No players ranked in this mode yet." : "No players match these filters."}
                   </td>
                 </tr>
               )}
