@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -173,7 +173,7 @@ function ModeRankings() {
                     )}
                   </td>
                   <td className="hidden px-4 py-3 text-muted-foreground md:table-cell">
-                    {format(new Date(r.lastTested), "MMM d, yyyy")}
+                    {format(parseISO(r.lastTested), "MMM d, yyyy")}
                   </td>
                   <td className="hidden px-4 py-3 text-muted-foreground md:table-cell">{r.tester ?? "—"}</td>
                 </tr>

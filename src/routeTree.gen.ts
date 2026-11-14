@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RankingsIndexRouteImport } from './routes/rankings.index'
+import { Route as RankingsModeRouteImport } from './routes/rankings.$mode'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const RankingsIndexRoute = RankingsIndexRouteImport.update({
   path: '/rankings/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RankingsModeRoute = RankingsModeRouteImport.update({
+  id: '/rankings/$mode',
+  path: '/rankings/$mode',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/rankings/$mode': typeof RankingsModeRoute
   '/rankings/': typeof RankingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/rankings/$mode': typeof RankingsModeRoute
   '/rankings': typeof RankingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/rankings/$mode': typeof RankingsModeRoute
   '/rankings/': typeof RankingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/rankings/'
+  fullPaths: '/' | '/rankings/$mode' | '/rankings/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/rankings'
-  id: '__root__' | '/' | '/rankings/'
+  to: '/' | '/rankings/$mode' | '/rankings'
+  id: '__root__' | '/' | '/rankings/$mode' | '/rankings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  RankingsModeRoute: typeof RankingsModeRoute
   RankingsIndexRoute: typeof RankingsIndexRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RankingsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rankings/$mode': {
+      id: '/rankings/$mode'
+      path: '/rankings/$mode'
+      fullPath: '/rankings/$mode'
+      preLoaderRoute: typeof RankingsModeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  RankingsModeRoute: RankingsModeRoute,
   RankingsIndexRoute: RankingsIndexRoute,
 }
 export const routeTree = rootRouteImport
