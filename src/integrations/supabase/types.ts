@@ -14,7 +14,144 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      players: {
+        Row: {
+          created_at: string
+          id: string
+          joined_at: string
+          region: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          joined_at?: string
+          region?: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          joined_at?: string
+          region?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      rankings: {
+        Row: {
+          created_at: string
+          gamemode: Database["public"]["Enums"]["gamemode"]
+          id: string
+          last_tested: string
+          player_id: string
+          previous_tier: Database["public"]["Enums"]["tier_code"] | null
+          tester_id: string | null
+          tier: Database["public"]["Enums"]["tier_code"]
+        }
+        Insert: {
+          created_at?: string
+          gamemode: Database["public"]["Enums"]["gamemode"]
+          id?: string
+          last_tested?: string
+          player_id: string
+          previous_tier?: Database["public"]["Enums"]["tier_code"] | null
+          tester_id?: string | null
+          tier?: Database["public"]["Enums"]["tier_code"]
+        }
+        Update: {
+          created_at?: string
+          gamemode?: Database["public"]["Enums"]["gamemode"]
+          id?: string
+          last_tested?: string
+          player_id?: string
+          previous_tier?: Database["public"]["Enums"]["tier_code"] | null
+          tester_id?: string | null
+          tier?: Database["public"]["Enums"]["tier_code"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rankings_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rankings_tester_id_fkey"
+            columns: ["tester_id"]
+            isOneToOne: false
+            referencedRelation: "testers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      testers: {
+        Row: {
+          created_at: string
+          id: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      tier_changes: {
+        Row: {
+          changed_at: string
+          from_tier: Database["public"]["Enums"]["tier_code"] | null
+          gamemode: Database["public"]["Enums"]["gamemode"]
+          id: string
+          notes: string | null
+          player_id: string
+          tester_id: string | null
+          to_tier: Database["public"]["Enums"]["tier_code"]
+        }
+        Insert: {
+          changed_at?: string
+          from_tier?: Database["public"]["Enums"]["tier_code"] | null
+          gamemode: Database["public"]["Enums"]["gamemode"]
+          id?: string
+          notes?: string | null
+          player_id: string
+          tester_id?: string | null
+          to_tier: Database["public"]["Enums"]["tier_code"]
+        }
+        Update: {
+          changed_at?: string
+          from_tier?: Database["public"]["Enums"]["tier_code"] | null
+          gamemode?: Database["public"]["Enums"]["gamemode"]
+          id?: string
+          notes?: string | null
+          player_id?: string
+          tester_id?: string | null
+          to_tier?: Database["public"]["Enums"]["tier_code"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tier_changes_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tier_changes_tester_id_fkey"
+            columns: ["tester_id"]
+            isOneToOne: false
+            referencedRelation: "testers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +160,31 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      gamemode:
+        | "sword"
+        | "axe"
+        | "crystal"
+        | "smp"
+        | "uhc"
+        | "pot"
+        | "nethpot"
+        | "mace"
+        | "diamond"
+        | "netherite"
+        | "bow"
+        | "crossbow"
+      tier_code:
+        | "HT1"
+        | "LT1"
+        | "HT2"
+        | "LT2"
+        | "HT3"
+        | "LT3"
+        | "HT4"
+        | "LT4"
+        | "HT5"
+        | "LT5"
+        | "Unranked"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +311,34 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      gamemode: [
+        "sword",
+        "axe",
+        "crystal",
+        "smp",
+        "uhc",
+        "pot",
+        "nethpot",
+        "mace",
+        "diamond",
+        "netherite",
+        "bow",
+        "crossbow",
+      ],
+      tier_code: [
+        "HT1",
+        "LT1",
+        "HT2",
+        "LT2",
+        "HT3",
+        "LT3",
+        "HT4",
+        "LT4",
+        "HT5",
+        "LT5",
+        "Unranked",
+      ],
+    },
   },
 } as const
