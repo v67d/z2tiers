@@ -72,7 +72,7 @@ export const getOverallLeaderboard = createServerFn({ method: "GET" }).handler(a
 });
 
 export const getModeLeaderboard = createServerFn({ method: "GET" })
-  .inputValidator((d) => z.object({ mode: z.string() }).parse(d))
+  .validator((d) => z.object({ mode: z.string() }).parse(d))
   .handler(async ({ data }) => {
     const mode = GAMEMODES.find((g) => g.slug === data.mode);
     if (!mode) throw notFound();
@@ -101,7 +101,7 @@ export const getModeLeaderboard = createServerFn({ method: "GET" })
   });
 
 export const getPlayerProfile = createServerFn({ method: "GET" })
-  .inputValidator((d) => z.object({ username: z.string().min(1).max(32) }).parse(d))
+  .validator((d) => z.object({ username: z.string().min(1).max(32) }).parse(d))
   .handler(async ({ data }) => {
     const db = publicDb();
     const { data: player, error } = await db

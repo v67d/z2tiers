@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PlayersUsernameRouteImport } from './routes/players.$username'
 import { Route as RankingsIndexRouteImport } from './routes/rankings.index'
 import { Route as RankingsModeRouteImport } from './routes/rankings.$mode'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlayersUsernameRoute = PlayersUsernameRouteImport.update({
+  id: '/players/$username',
+  path: '/players/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RankingsIndexRoute = RankingsIndexRouteImport.update({
@@ -31,30 +37,34 @@ const RankingsModeRoute = RankingsModeRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/players/$username': typeof PlayersUsernameRoute
   '/rankings/$mode': typeof RankingsModeRoute
   '/rankings/': typeof RankingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/players/$username': typeof PlayersUsernameRoute
   '/rankings/$mode': typeof RankingsModeRoute
   '/rankings': typeof RankingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/players/$username': typeof PlayersUsernameRoute
   '/rankings/$mode': typeof RankingsModeRoute
   '/rankings/': typeof RankingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/rankings/$mode' | '/rankings/'
+  fullPaths: '/' | '/players/$username' | '/rankings/$mode' | '/rankings/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/rankings/$mode' | '/rankings'
-  id: '__root__' | '/' | '/rankings/$mode' | '/rankings/'
+  to: '/' | '/players/$username' | '/rankings/$mode' | '/rankings'
+  id: '__root__' | '/' | '/players/$username' | '/rankings/$mode' | '/rankings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PlayersUsernameRoute: typeof PlayersUsernameRoute
   RankingsModeRoute: typeof RankingsModeRoute
   RankingsIndexRoute: typeof RankingsIndexRoute
 }
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/players/$username': {
+      id: '/players/$username'
+      path: '/players/$username'
+      fullPath: '/players/$username'
+      preLoaderRoute: typeof PlayersUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rankings/': {
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PlayersUsernameRoute: PlayersUsernameRoute,
   RankingsModeRoute: RankingsModeRoute,
   RankingsIndexRoute: RankingsIndexRoute,
 }
