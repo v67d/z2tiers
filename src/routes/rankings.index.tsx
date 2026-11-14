@@ -117,7 +117,7 @@ function OverallRankings() {
               {rows.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground">
-                    No players match “{q}”.
+                    {q.trim() ? <>No players match “{q}”.</> : "No players ranked yet."}
                   </td>
                 </tr>
               )}

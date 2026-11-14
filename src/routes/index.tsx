@@ -119,6 +119,7 @@ function Home() {
                 Overall
               </Link>
             </div>
+            {data.topPlayers.length === 0 && <EmptyNote text="No ranked players yet." />}
             <ol className="space-y-1">
               {data.topPlayers.map((p) => (
                 <li key={p.username}>
@@ -145,6 +146,7 @@ function Home() {
           {/* Recently ranked */}
           <section className="surface p-5">
             <h2 className="mb-4 text-lg font-semibold">Recently ranked</h2>
+            {data.recentlyRanked.length === 0 && <EmptyNote text="Nobody has been ranked yet." />}
             <ul className="space-y-0.5">
               {data.recentlyRanked.map((c) => (
                 <TierChangeItem key={c.id} change={c} />
@@ -155,6 +157,7 @@ function Home() {
           {/* Latest changes */}
           <section className="surface p-5">
             <h2 className="mb-4 text-lg font-semibold">Latest tier changes</h2>
+            {data.latestChanges.length === 0 && <EmptyNote text="No tier changes yet." />}
             <ul className="space-y-0.5">
               {data.latestChanges.map((c) => (
                 <TierChangeItem key={c.id} change={c} />
@@ -174,4 +177,8 @@ function SectionTitle({ title, subtitle }: { title: string; subtitle: string }) 
       <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
     </div>
   );
+}
+
+function EmptyNote({ text }: { text: string }) {
+  return <p className="rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">{text}</p>;
 }
