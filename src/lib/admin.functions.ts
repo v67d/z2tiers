@@ -71,8 +71,8 @@ async function applyTiers(
       _player_id: playerId,
       _gamemode: mode,
       _tier: tier,
-      _tester: tester || undefined,
-      _notes: notes || undefined,
+      ...(tester ? { _tester: tester } : {}),
+      ...(notes ? { _notes: notes } : {}),
     });
     if (error) throw new Error(`Could not save ${mode} tier: ${error.message}`);
   }
