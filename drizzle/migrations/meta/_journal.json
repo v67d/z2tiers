@@ -8,6 +8,13 @@
       "when": 1794624036258,
       "tag": "0000_pctiers_core_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794783168058,
+      "tag": "0001_admin_email_access",
+      "breakpoints": true
     }
   ]
 }
