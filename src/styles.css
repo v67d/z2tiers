@@ -30,6 +30,9 @@
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-card-elevated: var(--card-elevated);
+  --color-google: var(--google-bg);
+  --color-google-border: var(--google-border);
+  --color-google-foreground: var(--google-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
@@ -79,6 +82,10 @@
   --foreground: oklch(0.97 0.005 285);
   --card: oklch(0.2 0.016 284.9); /* #15151D */
   --card-elevated: oklch(0.235 0.02 285);
+  /* Google sign-in button, dark theme per Google branding */
+  --google-bg: #131314;
+  --google-border: #8e918f;
+  --google-foreground: #e3e3e3;
   --card-foreground: oklch(0.97 0.005 285);
   --popover: oklch(0.2 0.016 284.9);
   --popover-foreground: oklch(0.97 0.005 285);

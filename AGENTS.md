@@ -35,3 +35,4 @@ use the editor.
 - Tier order, tier points and the gamemode list live only in `src/lib/tiers.ts` (covered by `src/lib/tiers.test.ts`); why: leaderboards, badges and profiles must agree on one ladder.
 - Tier badge colors/glow come from `--tier-*` tokens and `.tier-badge[data-tier][data-level]` rules in `src/styles.css`; why: higher tiers get stronger visuals without per-component styling.
 - Player skins/heads load from mc-heads.net by username; why: no skin storage needed.
+- Admin rights = signed-in email present in `public.admin_emails`, checked by `public.is_admin()` in RLS and in the `admin_set_tier` / `admin_delete_player` functions; admin UI calls `src/lib/admin.functions.ts` (requireSupabaseAuth); why: one server-side source of truth for who can edit rankings, managed without code changes.

@@ -14,6 +14,21 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_emails: {
+        Row: {
+          created_at: string
+          email: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+        }
+        Relationships: []
+      }
       players: {
         Row: {
           created_at: string
@@ -157,7 +172,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      admin_delete_player: { Args: { _player_id: string }; Returns: undefined }
+      admin_set_tier: {
+        Args: {
+          _gamemode: Database["public"]["Enums"]["gamemode"]
+          _notes?: string
+          _player_id: string
+          _tester?: string
+          _tier: Database["public"]["Enums"]["tier_code"]
+        }
+        Returns: undefined
+      }
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       gamemode:

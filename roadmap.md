@@ -5,3 +5,7 @@
 - [ ] Phase 3: admin dashboard (approve/reject tier changes) — brief was cut off at "Administrators can:", waiting on the rest
 - [ ] Real Discord invite link — waiting on the user (currently points to discord.com)
 - [ ] Parked: "450 Client" Minecraft mod compatibility request — can't be built here (not a web app)
+- [ ] Admin login (Google) built — waiting on the user's list of admin Gmail addresses
+- [x] Admin tools: add players, set tiers per gamemode, remove tiers, delete players
+- [x] Use the user's uploaded image as the login/admin background
+- [ ] Discord account login/linking — not supported by the sign-in system here
