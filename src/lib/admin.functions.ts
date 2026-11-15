@@ -1,5 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { GAMEMODES, TIERS, type GamemodeSlug, type TierCode } from "./tiers";
 
@@ -33,7 +35,9 @@ export const getAdminState = createServerFn({ method: "GET" })
     return { isAdmin: data === true, email };
   });
 
-async function assertAdmin(supabase: { rpc: (fn: "is_admin") => PromiseLike<{ data: boolean | null }> }) {
+type Db = SupabaseClient<Database>;
+
+async function assertAdmin(supabase: Db) {
   const { data } = await supabase.rpc("is_admin");
   if (data !== true) throw new Error("This account is not on the admin list");
 }
@@ -54,8 +58,6 @@ export const listAdminPlayers = createServerFn({ method: "GET" })
       tiers: Object.fromEntries(p.rankings.map((r) => [r.gamemode, r.tier])),
     }));
   });
-
-type Db = Parameters<Parameters<ReturnType<typeof createServerFn>["handler"]>[0]>[0] extends never ? never : any;
 
 async function applyTiers(
   supabase: Db,
