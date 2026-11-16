@@ -127,6 +127,8 @@ function OverallRankings() {
   );
 }
 
+const NOBLE_MIN = TITLE_THRESHOLDS.find((t) => t.title === "Noble")?.minPoints ?? 0;
+
 function TitleLegend() {
   return (
     <div className="surface flex flex-wrap items-center gap-x-5 gap-y-3 p-4 text-sm text-muted-foreground">
@@ -134,7 +136,7 @@ function TitleLegend() {
       {TITLE_THRESHOLDS.map((t) => (
         <span key={t.title} className="flex items-center gap-2">
           <TitleBadge title={t.title} />
-          {t.minPoints > 0 ? `${t.minPoints}+ points` : `under ${TITLE_THRESHOLDS[TITLE_THRESHOLDS.length - 2].minPoints} points`}
+          {t.minPoints > 0 ? `${t.minPoints}+ points` : `under ${NOBLE_MIN} points`}
         </span>
       ))}
     </div>
