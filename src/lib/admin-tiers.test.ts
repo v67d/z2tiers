@@ -9,6 +9,6 @@ describe("tierEdits", () => {
     expect(tierEdits({ mace: "LT1" }, {})).toEqual({ mace: "Unranked" });
   });
   it("a new player only gets the tiers that were picked", () => {
-    expect(tierEdits({}, { crystal: "HT1", bow: "Unranked" })).toEqual({ crystal: "HT1" });
+    expect(tierEdits({}, { crystal: "HT1", elytra: "Unranked" })).toEqual({ crystal: "HT1" });
   });
 });
