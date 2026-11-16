@@ -14,12 +14,15 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/75 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <Logo />
-        <nav className="flex items-center gap-1">
-          <Link to="/" className={navLink} activeOptions={{ exact: true }}>
+        <nav className="flex items-center gap-0.5 sm:gap-1">
+          <Link to="/" className={`${navLink} hidden sm:inline-flex`} activeOptions={{ exact: true }}>
             Home
           </Link>
           <Link to="/rankings" className={navLink}>
-            Rankings
+            Overall
+          </Link>
+          <Link to="/testers" className={navLink}>
+            Testers
           </Link>
           {session ? (
             <Link to="/admin" className={navLink}>
@@ -29,7 +32,7 @@ export function SiteHeader() {
             </Link>
           ) : (
             <Link to="/auth" className={navLink}>
-              Admin login
+              Admin<span className="hidden sm:inline"> login</span>
             </Link>
           )}
           <Button asChild variant="glass" size="sm" className="ml-2 hidden sm:inline-flex">
