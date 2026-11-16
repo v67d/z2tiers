@@ -25,7 +25,7 @@ export const Route = createFileRoute("/testers")({
 
 const STATUS: Record<DiscordStatus, { label: string; dot: string }> = {
   online: { label: "Online", dot: "bg-success" },
-  idle: { label: "Idle", dot: "bg-tier-ht1" },
+  idle: { label: "Idle", dot: "bg-[color:var(--tier-ht1)]" },
   dnd: { label: "Do not disturb", dot: "bg-destructive" },
   offline: { label: "Offline", dot: "bg-muted-foreground/50" },
 };
