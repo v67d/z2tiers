@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { GAMEMODES, TIERS, compareTiers, tierLevel, tierMovement, tierPoints } from "./tiers";
+import { GAMEMODES, TIERS, compareTiers, overallTitle, tierLevel, tierMovement, tierPoints } from "./tiers";
 
 describe("tier system", () => {
   it("orders tiers HT1 > LT1 > HT2 > ... > LT5 > Unranked", () => {
@@ -23,9 +23,27 @@ describe("tier system", () => {
     expect(tierLevel("LT2")).toBe(2);
   });
 
-  it("has all 12 gamemodes", () => {
+  it("has 12 gamemodes with Spear Mace and Elytra, and no Bow or Crossbow", () => {
     expect(GAMEMODES.map((g) => g.name)).toEqual([
-      "Sword", "Axe", "Crystal", "SMP", "UHC", "Pot", "NethPot", "Mace", "Diamond", "Netherite", "Bow", "Crossbow",
+      "Sword", "Axe", "Crystal", "SMP", "UHC", "Pot", "NethPot", "Mace", "Diamond", "Netherite", "Spear Mace", "Elytra",
     ]);
+  });
+});
+
+describe("overall titles", () => {
+  it("150+ points is Combat Master", () => {
+    expect(overallTitle(150)).toBe("Combat Master");
+    expect(overallTitle(149)).toBe("Combat Specialist");
+  });
+  it("60+ points is Combat Specialist", () => {
+    expect(overallTitle(60)).toBe("Combat Specialist");
+    expect(overallTitle(59)).toBe("Noble");
+  });
+  it("20+ points is Noble", () => {
+    expect(overallTitle(20)).toBe("Noble");
+    expect(overallTitle(19)).toBe("Noobie");
+  });
+  it("below 20 points is Noobie", () => {
+    expect(overallTitle(0)).toBe("Noobie");
   });
 });

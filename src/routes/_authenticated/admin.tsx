@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { LogOut, Pencil, Plus, Search, ShieldAlert, ShieldCheck, Trash2 } from "lucide-react";
+import { Check, LogOut, MessageCircle, Pencil, Plus, Search, ShieldAlert, ShieldCheck, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -28,10 +28,14 @@ import { TierPicker } from "@/components/pctiers/TierPicker";
 import {
   createPlayer,
   deletePlayer,
+  deleteTester,
   getAdminState,
   listAdminPlayers,
+  listAdminTesters,
+  saveTester,
   updatePlayer,
   type AdminPlayer,
+  type AdminTester,
 } from "@/lib/admin.functions";
 import { tierEdits, type TierMap } from "@/lib/admin-tiers";
 import { GAMEMODES } from "@/lib/tiers";
@@ -176,9 +180,133 @@ function AdminTools() {
         )}
       </section>
 
+      <TestersCard />
+
       {editing && <EditPlayerDialog player={editing} onClose={() => setEditing(null)} />}
       {deleting && <DeletePlayerDialog player={deleting} onClose={() => setDeleting(null)} />}
     </div>
+  );
+}
+
+function TestersCard() {
+  const list = useServerFn(listAdminTesters);
+  const save = useServerFn(saveTester);
+  const refresh = useRefreshAll();
+  const testers = useQuery({ queryKey: ["admin", "testers"], queryFn: () => list() });
+  const [name, setName] = useState("");
+  const [discord, setDiscord] = useState("");
+
+  const add = useMutation({
+    mutationFn: () => save({ data: { username: name, discordName: discord } }),
+    onSuccess: () => {
+      toast.success(`${name.trim()} added as a tester`);
+      setName("");
+      setDiscord("");
+      refresh();
+    },
+    onError: (e) => toast.error(errMsg(e)),
+  });
+
+  return (
+    <section className="surface bg-card/80 p-5 backdrop-blur lg:col-span-2">
+      <h2 className="flex items-center gap-2 text-lg font-semibold">
+        <Users className="size-5 text-primary" /> Testers ({testers.data?.length ?? 0})
+      </h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Enter each tester's Discord name exactly as it shows in the PCTIERS Discord server. The Testers page uses it to show who's online.
+      </p>
+      <form
+        className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
+        onSubmit={(e) => {
+          e.preventDefault();
+          add.mutate();
+        }}
+      >
+        <div className="space-y-1.5">
+          <Label htmlFor="new-tester">Tester name</Label>
+          <Input id="new-tester" value={name} onChange={(e) => setName(e.target.value)} required maxLength={32} placeholder="Minecraft name" />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="new-tester-discord">Discord name</Label>
+          <Input id="new-tester-discord" value={discord} onChange={(e) => setDiscord(e.target.value)} maxLength={40} placeholder="e.g. z2n5" />
+        </div>
+        <Button type="submit" variant="hero" disabled={add.isPending}>
+          <Plus /> {add.isPending ? "Adding…" : "Add tester"}
+        </Button>
+      </form>
+
+      {testers.isPending ? (
+        <p className="py-8 text-center text-sm text-muted-foreground">Loading testers…</p>
+      ) : testers.isError ? (
+        <p className="py-8 text-center text-sm text-destructive">{errMsg(testers.error)}</p>
+      ) : testers.data.length === 0 ? (
+        <p className="mt-4 rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">No testers yet.</p>
+      ) : (
+        <ul className="mt-4 grid gap-x-6 divide-y divide-border/60 md:grid-cols-2 md:divide-y-0">
+          {testers.data.map((t) => (
+            <TesterRow key={t.id} tester={t} />
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function TesterRow({ tester }: { tester: AdminTester }) {
+  const save = useServerFn(saveTester);
+  const del = useServerFn(deleteTester);
+  const refresh = useRefreshAll();
+  const [discord, setDiscord] = useState(tester.discordName ?? "");
+  const dirty = discord.trim().replace(/^@/, "") !== (tester.discordName ?? "");
+
+  const update = useMutation({
+    mutationFn: () => save({ data: { id: tester.id, username: tester.username, discordName: discord } }),
+    onSuccess: () => {
+      toast.success(`Saved ${tester.username}'s Discord name`);
+      refresh();
+    },
+    onError: (e) => toast.error(errMsg(e)),
+  });
+  const remove = useMutation({
+    mutationFn: () => del({ data: { id: tester.id } }),
+    onSuccess: () => {
+      toast.success(`${tester.username} removed from testers`);
+      refresh();
+    },
+    onError: (e) => toast.error(errMsg(e)),
+  });
+
+  return (
+    <li className="flex items-center gap-3 py-3 md:border-b md:border-border/60">
+      <PlayerAvatar username={tester.username} size={32} />
+      <span className="w-24 truncate font-semibold">{tester.username}</span>
+      <div className="relative flex-1">
+        <MessageCircle className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          value={discord}
+          onChange={(e) => setDiscord(e.target.value)}
+          maxLength={40}
+          placeholder="Discord name"
+          className="h-9 pl-8"
+          aria-label={`${tester.username}'s Discord name`}
+        />
+      </div>
+      <Button size="sm" variant="glass" disabled={!dirty || update.isPending} onClick={() => update.mutate()} aria-label={`Save ${tester.username}`}>
+        <Check />
+      </Button>
+      <Button
+        size="icon"
+        variant="ghost"
+        className="text-destructive hover:text-destructive"
+        disabled={remove.isPending}
+        onClick={() => {
+          if (confirm(`Remove ${tester.username} from testers? Their past results stay, just without a tester name.`)) remove.mutate();
+        }}
+        aria-label={`Remove ${tester.username}`}
+      >
+        <Trash2 />
+      </Button>
+    </li>
   );
 }
 

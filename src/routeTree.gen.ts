@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as TestersRouteImport } from './routes/testers'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as PlayersUsernameRouteImport } from './routes/players.$username'
 import { Route as RankingsIndexRouteImport } from './routes/rankings.index'
@@ -29,6 +30,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestersRoute = TestersRouteImport.update({
+  id: '/testers',
+  path: '/testers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -55,6 +61,7 @@ const RankingsModeRoute = RankingsModeRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/testers': typeof TestersRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/players/$username': typeof PlayersUsernameRoute
   '/rankings/$mode': typeof RankingsModeRoute
@@ -63,6 +70,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/testers': typeof TestersRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/players/$username': typeof PlayersUsernameRoute
   '/rankings/$mode': typeof RankingsModeRoute
@@ -73,6 +81,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/testers': typeof TestersRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/players/$username': typeof PlayersUsernameRoute
   '/rankings/$mode': typeof RankingsModeRoute
@@ -83,6 +92,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/testers'
     | '/admin'
     | '/players/$username'
     | '/rankings/$mode'
@@ -91,6 +101,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/testers'
     | '/admin'
     | '/players/$username'
     | '/rankings/$mode'
@@ -100,6 +111,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/testers'
     | '/_authenticated/admin'
     | '/players/$username'
     | '/rankings/$mode'
@@ -110,6 +122,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  TestersRoute: typeof TestersRoute
   PlayersUsernameRoute: typeof PlayersUsernameRoute
   RankingsModeRoute: typeof RankingsModeRoute
   RankingsIndexRoute: typeof RankingsIndexRoute
@@ -136,6 +149,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/testers': {
+      id: '/testers'
+      path: '/testers'
+      fullPath: '/testers'
+      preLoaderRoute: typeof TestersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -184,6 +204,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  TestersRoute: TestersRoute,
   PlayersUsernameRoute: PlayersUsernameRoute,
   RankingsModeRoute: RankingsModeRoute,
   RankingsIndexRoute: RankingsIndexRoute,

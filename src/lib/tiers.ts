@@ -94,12 +94,32 @@ export const GAMEMODES: readonly Gamemode[] = [
   { slug: "mace", name: "Mace", blurb: "Wind charges, smash attacks and air control." },
   { slug: "diamond", name: "Diamond", blurb: "Classic full-diamond SMP combat." },
   { slug: "netherite", name: "Netherite", blurb: "Max-gear netherite brawls." },
-  { slug: "bow", name: "Bow", blurb: "Ranged aim, prediction and bow-boosting." },
-  { slug: "crossbow", name: "Crossbow", blurb: "Multishot, piercing and burst damage." },
+  { slug: "spearmace", name: "Spear Mace", blurb: "Spear lunges mixed with mace smashes." },
+  { slug: "elytra", name: "Elytra", blurb: "Mid-air fights, rockets and flight control." },
 ] as const;
 
 export function getGamemode(slug: string): Gamemode | undefined {
   return GAMEMODES.find((g) => g.slug === slug);
+}
+
+/** True for gamemodes shown on the site (retired modes like Bow/Crossbow are excluded). */
+export function isActiveGamemode(slug: string): slug is GamemodeSlug {
+  return GAMEMODES.some((g) => g.slug === slug);
+}
+
+export type OverallTitle = "Combat Master" | "Combat Specialist" | "Noble" | "Noobie";
+
+/** Minimum overall points for each title, highest first. */
+export const TITLE_THRESHOLDS: readonly { title: OverallTitle; minPoints: number }[] = [
+  { title: "Combat Master", minPoints: 150 },
+  { title: "Combat Specialist", minPoints: 60 },
+  { title: "Noble", minPoints: 20 },
+  { title: "Noobie", minPoints: 0 },
+];
+
+/** Overall title earned from total points across all gamemodes. */
+export function overallTitle(points: number): OverallTitle {
+  return TITLE_THRESHOLDS.find((t) => points >= t.minPoints)?.title ?? "Noobie";
 }
 
 export function avatarUrl(username: string, size = 64) {
@@ -110,4 +130,7 @@ export function bodyUrl(username: string, size = 280) {
   return `https://mc-heads.net/body/${encodeURIComponent(username)}/${size}`;
 }
 
-export const DISCORD_URL = "https://discord.com";
+export const DISCORD_URL = "https://discord.gg/VwfudeGasW";
+
+/** PCTIERS Discord server, used to read which testers are online. */
+export const DISCORD_GUILD_ID = "1570963268372004886";

@@ -5,13 +5,13 @@ import { Crown, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ModeTabs } from "@/components/pctiers/ModeTabs";
 import { PageHero } from "@/components/pctiers/PageHero";
-import { Pager } from "@/components/pctiers/Pager";
 import { PlayerAvatar } from "@/components/pctiers/PlayerAvatar";
 import { TierBadge } from "@/components/pctiers/TierBadge";
 import { GamemodeIcon } from "@/components/pctiers/GamemodeIcon";
 import { Position } from "@/components/pctiers/Position";
+import { TitleBadge } from "@/components/pctiers/TitleBadge";
 import { overallQuery } from "@/lib/queries";
-import { GAMEMODES } from "@/lib/tiers";
+import { GAMEMODES, TITLE_THRESHOLDS } from "@/lib/tiers";
 
 export const Route = createFileRoute("/rankings/")({
   head: () => ({
@@ -28,27 +28,23 @@ export const Route = createFileRoute("/rankings/")({
   component: OverallRankings,
 });
 
-const PAGE_SIZE = 15;
-
 function OverallRankings() {
   const { data } = useSuspenseQuery(overallQuery());
   const [q, setQ] = useState("");
-  const [page, setPage] = useState(1);
 
   const filtered = useMemo(
     () => data.filter((p) => p.username.toLowerCase().includes(q.trim().toLowerCase())),
     [data, q],
   );
-  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const current = Math.min(page, pageCount);
-  const rows = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
+  // Everyone on one list — no pages, so every ranked player is visible.
+  const rows = filtered;
 
   return (
     <div className="mx-auto max-w-7xl space-y-8 px-4 pt-10 sm:px-6">
       <PageHero
         eyebrow="Leaderboard"
         title="Overall Rankings"
-        subtitle="Points from every gamemode tier, combined."
+        subtitle={`Every ranked player — ${data.length} total. Points from every gamemode tier, combined.`}
         icon={<Crown className="size-7" />}
       />
       <ModeTabs />
@@ -57,10 +53,7 @@ function OverallRankings() {
         <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={q}
-          onChange={(e) => {
-            setQ(e.target.value);
-            setPage(1);
-          }}
+          onChange={(e) => setQ(e.target.value)}
           placeholder="Search players"
           className="h-11 rounded-xl bg-card pl-9"
           aria-label="Search players"
@@ -74,6 +67,7 @@ function OverallRankings() {
               <tr>
                 <th className="px-4 py-3 font-medium">#</th>
                 <th className="px-4 py-3 font-medium">Player</th>
+                <th className="px-4 py-3 font-medium">Title</th>
                 <th className="px-4 py-3 font-medium">Points</th>
                 <th className="px-4 py-3 font-medium">Best</th>
                 <th className="hidden px-4 py-3 font-medium lg:table-cell">Gamemode tiers</th>
@@ -98,6 +92,9 @@ function OverallRankings() {
                       </span>
                     </Link>
                   </td>
+                  <td className="px-4 py-3">
+                    <TitleBadge title={p.title} />
+                  </td>
                   <td className="px-4 py-3 font-display font-semibold tabular-nums">{p.points}</td>
                   <td className="px-4 py-3">
                     <TierBadge tier={p.bestTier} />
@@ -116,7 +113,7 @@ function OverallRankings() {
               ))}
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground">
+                  <td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">
                     {q.trim() ? <>No players match “{q}”.</> : "No players ranked yet."}
                   </td>
                 </tr>
@@ -125,7 +122,23 @@ function OverallRankings() {
           </table>
         </div>
       </div>
-      <Pager page={current} pageCount={pageCount} total={filtered.length} onPage={setPage} />
+      <TitleLegend />
+    </div>
+  );
+}
+
+const NOBLE_MIN = TITLE_THRESHOLDS.find((t) => t.title === "Noble")?.minPoints ?? 0;
+
+function TitleLegend() {
+  return (
+    <div className="surface flex flex-wrap items-center gap-x-5 gap-y-3 p-4 text-sm text-muted-foreground">
+      <span className="font-semibold text-foreground">Titles</span>
+      {TITLE_THRESHOLDS.map((t) => (
+        <span key={t.title} className="flex items-center gap-2">
+          <TitleBadge title={t.title} />
+          {t.minPoints > 0 ? `${t.minPoints}+ points` : `under ${NOBLE_MIN} points`}
+        </span>
+      ))}
     </div>
   );
 }

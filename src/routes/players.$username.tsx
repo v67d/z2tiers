@@ -6,6 +6,7 @@ import { PlayerAvatar } from "@/components/pctiers/PlayerAvatar";
 import { TierBadge } from "@/components/pctiers/TierBadge";
 import { GamemodeIcon } from "@/components/pctiers/GamemodeIcon";
 import { TierChangeItem } from "@/components/pctiers/TierChangeItem";
+import { TitleBadge } from "@/components/pctiers/TitleBadge";
 import { playerQuery } from "@/lib/queries";
 import { GAMEMODES, bodyUrl, tierName } from "@/lib/tiers";
 
@@ -75,9 +76,10 @@ function PlayerProfile() {
             />
           </div>
           <div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <PlayerAvatar username={player.username} size={44} />
               <h1 className="text-3xl font-bold sm:text-4xl">{player.username}</h1>
+              <TitleBadge title={stats.title} />
             </div>
             <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5">

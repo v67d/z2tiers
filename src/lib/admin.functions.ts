@@ -122,3 +122,49 @@ export const deletePlayer = createServerFn({ method: "POST" })
     if (error) throw new Error(`Could not delete player: ${error.message}`);
     return { ok: true };
   });
+
+export type AdminTester = { id: string; username: string; discordName: string | null };
+
+const testerNameSchema = z.string().trim().min(1, "Enter a tester name").max(32);
+const discordNameSchema = z
+  .string()
+  .trim()
+  .max(40, "Discord names are at most 40 characters")
+  .transform((v) => (v ? v.replace(/^@/, "") : null));
+
+export const listAdminTesters = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<AdminTester[]> => {
+    await assertAdmin(context.supabase);
+    const { data, error } = await context.supabase.from("testers").select("id, username, discord_name").order("username");
+    if (error) throw new Error(`Could not load testers: ${error.message}`);
+    return (data ?? []).map((t) => ({ id: t.id, username: t.username, discordName: t.discord_name }));
+  });
+
+export const saveTester = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) =>
+    z.object({ id: z.string().uuid().optional(), username: testerNameSchema, discordName: discordNameSchema }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase);
+    const row = { username: data.username, discord_name: data.discordName };
+    const { error } = data.id
+      ? await context.supabase.from("testers").update(row).eq("id", data.id)
+      : await context.supabase.from("testers").insert(row);
+    if (error) {
+      if (error.code === "23505") throw new Error(`A tester called ${data.username} already exists`);
+      throw new Error(`Could not save tester: ${error.message}`);
+    }
+    return { ok: true };
+  });
+
+export const deleteTester = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase);
+    const { error } = await context.supabase.from("testers").delete().eq("id", data.id);
+    if (error) throw new Error(`Could not remove tester: ${error.message}`);
+    return { ok: true };
+  });
