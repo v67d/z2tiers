@@ -2,6 +2,7 @@ import {
   Axe,
   Crosshair,
   Diamond,
+  Feather,
   FlaskConical,
   Flame,
   Gem,
@@ -10,6 +11,7 @@ import {
   Shield,
   Swords,
   Target,
+  Zap,
   Tent,
   type LucideIcon,
 } from "lucide-react";
@@ -28,6 +30,8 @@ const ICONS: Record<GamemodeSlug, LucideIcon> = {
   netherite: Shield,
   bow: Target,
   crossbow: Crosshair,
+  spearmace: Zap,
+  elytra: Feather,
 };
 
 export function GamemodeIcon({ slug, className }: { slug: GamemodeSlug; className?: string }) {

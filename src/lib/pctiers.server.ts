@@ -1,6 +1,16 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { tierPoints, compareTiers, type TierCode, type GamemodeSlug } from "./tiers";
+import {
+  DISCORD_GUILD_ID,
+  compareTiers,
+  isActiveGamemode,
+  overallTitle,
+  tierPoints,
+  type GamemodeSlug,
+  type OverallTitle,
+  type TierCode,
+} from "./tiers";
+import type { DiscordMember } from "./testers";
 
 /** Read-only client for public ranking data. Create per request. */
 export function publicDb() {
@@ -41,6 +51,7 @@ export async function fetchAllRankings(): Promise<RankingRow[]> {
       .range(from, from + page - 1);
     if (error) throw new Error(`Could not load rankings: ${error.message}`);
     for (const r of data ?? []) {
+      if (!isActiveGamemode(r.gamemode)) continue;
       out.push({
         username: r.players.username,
         region: r.players.region,
@@ -63,11 +74,12 @@ export type OverallEntry = {
   points: number;
   bestTier: TierCode;
   modes: number;
+  title: OverallTitle;
   tiers: Partial<Record<GamemodeSlug, TierCode>>;
 };
 
 export function buildOverall(rows: RankingRow[]): OverallEntry[] {
-  const map = new Map<string, Omit<OverallEntry, "position">>();
+  const map = new Map<string, Omit<OverallEntry, "position" | "title">>();
   for (const r of rows) {
     const e =
       map.get(r.username) ??
@@ -80,5 +92,28 @@ export function buildOverall(rows: RankingRow[]): OverallEntry[] {
   }
   return [...map.values()]
     .sort((a, b) => b.points - a.points || compareTiers(a.bestTier, b.bestTier) || a.username.localeCompare(b.username))
-    .map((e, i) => ({ ...e, position: i + 1 }));
+    .map((e, i) => ({ ...e, title: overallTitle(e.points), position: i + 1 }));
+}
+
+/**
+ * Members currently online in the PCTIERS Discord, read from the server's public widget.
+ * Returns null when the widget is turned off or Discord can't be reached.
+ */
+export async function fetchDiscordOnline(): Promise<DiscordMember[] | null> {
+  try {
+    const res = await fetch(`https://discord.com/api/guilds/${DISCORD_GUILD_ID}/widget.json`, {
+      headers: { accept: "application/json" },
+    });
+    if (!res.ok) {
+      console.warn(`Discord widget unavailable [${res.status}]: ${await res.text()}`);
+      return null;
+    }
+    const body = (await res.json()) as { members?: { username?: string; status?: string }[] };
+    return (body.members ?? [])
+      .filter((m) => typeof m.username === "string")
+      .map((m) => ({ username: m.username!, status: m.status ?? "online" }));
+  } catch (e) {
+    console.warn("Discord widget request failed", e);
+    return null;
+  }
 }
