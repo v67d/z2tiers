@@ -89,7 +89,7 @@ function TestersPage() {
                 <div className="text-right text-xs">
                   <div className={isOnline ? "font-semibold text-success" : "text-muted-foreground"}>{s.label}</div>
                   <div className="mt-1 flex items-center justify-end gap-1 text-muted-foreground">
-                    <ClipboardCheck className="size-3.5" /> {t.tests} tests
+                    <ClipboardCheck className="size-3.5" /> {t.tests} {t.tests === 1 ? "test" : "tests"}
                   </div>
                 </div>
               </li>

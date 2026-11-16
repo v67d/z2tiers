@@ -6,13 +6,13 @@ import { DISCORD_URL } from "@/lib/tiers";
 import { Logo } from "./Logo";
 
 const navLink =
-  "rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[status=active]:text-foreground data-[status=active]:bg-muted";
+  "rounded-lg px-2 py-2 text-[13px] font-medium sm:px-3 sm:text-sm text-muted-foreground transition-colors hover:text-foreground data-[status=active]:text-foreground data-[status=active]:bg-muted";
 
 export function SiteHeader() {
   const { session } = useSession();
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/75 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:gap-4 sm:px-6">
         <Logo />
         <nav className="flex items-center gap-0.5 sm:gap-1">
           <Link to="/" className={`${navLink} hidden sm:inline-flex`} activeOptions={{ exact: true }}>
