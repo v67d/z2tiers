@@ -104,16 +104,19 @@ export type Database = {
       testers: {
         Row: {
           created_at: string
+          discord_name: string | null
           id: string
           username: string
         }
         Insert: {
           created_at?: string
+          discord_name?: string | null
           id?: string
           username: string
         }
         Update: {
           created_at?: string
+          discord_name?: string | null
           id?: string
           username?: string
         }
@@ -199,6 +202,8 @@ export type Database = {
         | "netherite"
         | "bow"
         | "crossbow"
+        | "spearmace"
+        | "elytra"
       tier_code:
         | "HT1"
         | "LT1"
@@ -351,6 +356,8 @@ export const Constants = {
         "netherite",
         "bow",
         "crossbow",
+        "spearmace",
+        "elytra",
       ],
       tier_code: [
         "HT1",
